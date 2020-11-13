@@ -32,7 +32,7 @@ export default {
   actions: {
     registerCoach(context, payload) {
       const coachData = {
-        id: 'c3',
+        id: context.rootGetters.userId,
         firstName: payload.first,
         lastName: payload.last,
         description: payload.desc,
@@ -48,6 +48,11 @@ export default {
     },
     hasCoaches(state) {
       return state.coaches && state.coaches.length > 0;
+    },
+    isCoach(_, getters, _2, rootGetters) {
+      const coaches = getters.coaches;
+      const userId = rootGetters.userId;
+      return coaches.some(coach => coach.id === userId);
     }
   }
 };

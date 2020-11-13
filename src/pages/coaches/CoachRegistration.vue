@@ -13,6 +13,7 @@ export default {
   components: {
     CoachForm
   },
+  computed: {},
   methods: {
     saveData(data) {
       this.$store.dispatch('coaches/registerCoach', data);
