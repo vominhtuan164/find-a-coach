@@ -23,7 +23,7 @@
           :areas="coach.areas"
         ></coach-item>
       </ul>
-      <h3 v-else>No coaches found</h3>
+      <h3 v-else>No Coaches Found</h3>
     </base-card>
   </section>
 </template>
