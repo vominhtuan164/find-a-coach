@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export default {
   namespaced: true,
   state() {
@@ -27,19 +29,58 @@ export default {
   mutations: {
     registerCoach(state, payload) {
       state.coaches.push(payload);
+    },
+    setCoaches(state, payload) {
+      state.coaches = payload;
     }
   },
   actions: {
-    registerCoach(context, payload) {
+    async registerCoach(context, payload) {
+      const userId = context.rootGetters.userId;
       const coachData = {
-        id: context.rootGetters.userId,
         firstName: payload.first,
         lastName: payload.last,
         description: payload.desc,
         hourlyRate: payload.rate,
         areas: payload.areas
       };
-      context.commit('registerCoach', coachData);
+
+      const response = await axios.put(
+        `https://find-a-coach-6dd13.firebaseio.com/coaches/${userId}.json`,
+        coachData
+      );
+
+      if (!response.ok) {
+        //error
+      }
+      context.commit('registerCoach', { ...coachData, id: userId });
+    },
+    async loadCoaches(context) {
+      const response = await axios.get(
+        'https://find-a-coach-6dd13.firebaseio.com/coaches.json'
+      );
+
+      if (!response.ok) {
+        const error = new Error('Failed to get data from server');
+        throw error;
+      }
+      console.log(response);
+      const responseData = response.data;
+      const coaches = [];
+
+      for (const key in responseData) {
+        const coach = {
+          id: key,
+          firstName: responseData[key].firstName,
+          lastName: responseData[key].lastName,
+          description: responseData[key].description,
+          hourlyRate: responseData[key].hourlyRate,
+          areas: responseData[key].areas
+        };
+        coaches.push(coach);
+      }
+
+      context.commit('setCoaches', coaches);
     }
   },
   getters: {
